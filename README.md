@@ -1,30 +1,66 @@
-# GitPulse GitHub comparison
+# CommitLens: Compare Your GitHub Activity
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
-
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/nihaltpnki/v0-git-pulse-git-hub-comparison)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/CEOWEieWJww)
-
-## Overview
-
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+CommitLens is a web application designed to help **GitHub users visualize and compare their recent activity** against their past performance. By simply entering a GitHub username and selecting a time window, users can gain insights into their development habits, progress, and consistency.
 
 ## Deployment
+Deployed at [https://commitlens.vercel.app/](https://commitlens.vercel.app/)
 
-Your project is live at:
+## 🚀 Features
 
-**[https://vercel.com/nihaltpnki/v0-git-pulse-git-hub-comparison](https://vercel.com/nihaltpnki/v0-git-pulse-git-hub-comparison)**
+### Core Functionality
+* **Performance Comparison:** Compare the user's activity in the most recent time window (e.g., the last month) with the preceding equivalent period (e.g., the month before that).
+* **Selectable Time Windows:** Choose from **Week, Month, 6 Months, or Year** for analysis.
+* **GitHub API Integration:** Fetches accurate contribution data directly from the GitHub API.
 
-## Build your app
+### Dashboard Insights
+* **Contribution Chart Tab:**
+    * **Stacked Grids:** Two visually familiar GitHub-style contribution grids for the current and previous periods.
+    * **Summary Statistics:** Displays key metrics like **Total Commits, % Change (Growth/Decline), Longest Streak, and Activity Frequency**.
+* **Commit Graph Tab:**
+    * **Time-Series Visualization:** A line or bar chart showing commit count versus time for both periods.
+    * **Overlay Toggle:** An option to directly **overlay the two graphs** for an immediate visual comparison.
+    * **Interactive Tooltips:** Show daily commit counts on hover.
 
-Continue building your app on:
+### Performance & Data Management
+* **Intelligent Caching:** Implements a caching layer (e.g., Redis, SQLite, or in-memory) to **store user data for 24 hours**, ensuring fast subsequent lookups and respecting GitHub API limits.
+* **Cache Lifespan:** Automatically deletes cached data older than 2 years (730 days).
+* *Future Capability: Incremental fetching to update only new commits.*
 
-**[https://v0.app/chat/projects/CEOWEieWJww](https://v0.app/chat/projects/CEOWEieWJww)**
+### UX & Design
+* **Modern and Minimal Interface:** Clean, intuitive, and focused design.
+* **Responsive Layout:** Fully functional on **desktop and mobile devices**.
+* **Visual Indicators:** Uses **green for growth** and **red for decline** in performance metrics.
+* **Light/Dark Mode Toggle:** User-preferred visual style.
+* **Last Refresh Time:** Clearly displays when the data was last updated.
+* **Export Options:** Ability to export the charts as an **image or PDF**.
 
-## How It Works
+## ✨ Extra Ideas (Future Scope)
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+* **"Compare with Friend":** A side-by-side comparison feature for two different GitHub usernames.
+* **GitHub OAuth Login:** Implementing OAuth for a smoother experience and accessing extended API rate limits.
+* **"Insight Summary" Card:** A high-level, natural language summary of the user's performance (e.g., "Your commits increased by 25% this month!").
+
+## 🛠️ Technology Stack (Planned)
+
+*(Note: This section is a placeholder for the technologies that will be used to build CommitLens, which can be filled in once development begins.)*
+
+| Layer | Potential Technologies |
+| :--- | :--- |
+| **Frontend** | React / Vue / Svelte (with TypeScript) |
+| **Styling** | Tailwind CSS / Styled Components |
+| **Data Visualization** | Chart.js / D3.js / Recharts |
+| **Backend** | Node.js (Express) / Python (Flask/Django) / Go |
+| **Database/Cache** | Redis (for caching) / PostgreSQL or SQLite (for user settings) |
+| **Deployment** | Vercel / Netlify / Heroku |
+
+## ⚙️ Local Development (Instructions Pending)
+
+*(This section will contain detailed steps for cloning the repository, installing dependencies, setting up environment variables (like GitHub API keys), and running the development server.)*
+
+## 🤝 Contributing
+
+We welcome contributions to CommitLens! If you have suggestions for new features, find a bug, or want to help with development, please check out our [CONTRIBUTING.md] (to be created) for guidelines.
+
+## 📄 License
+
+GitPulse is released under the [MIT License](LICENSE) (to be confirmed).
