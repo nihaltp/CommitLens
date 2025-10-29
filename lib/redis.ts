@@ -1,10 +1,11 @@
 import { Redis } from "@upstash/redis"
 
 let redis: Redis | null = null
-let redisAvailable = false
+let redisInitialized = false
+let redisWarningLogged = false
 
 export function getRedisClient(): Redis | null {
-  if (redis === null && !redisAvailable) {
+  if (!redisInitialized) {
     const url = process.env.KV_REST_API_URL || process.env.KV_URL || process.env.REDIS_URL
     const token = process.env.KV_REST_API_TOKEN
 
@@ -13,14 +14,16 @@ export function getRedisClient(): Redis | null {
         url,
         token,
       })
-      redisAvailable = true
       console.log("[v0] Redis client initialized successfully")
     } else {
-      console.warn(
-        "[v0] Redis environment variables missing. Caching disabled. Add KV_REST_API_URL and KV_REST_API_TOKEN in Vars.",
-      )
-      redisAvailable = false
+      if (!redisWarningLogged) {
+        console.warn(
+          "[v0] Redis environment variables missing. Caching disabled. Add KV_REST_API_URL and KV_REST_API_TOKEN in Vars.",
+        )
+        redisWarningLogged = true
+      }
     }
+    redisInitialized = true
   }
   return redis
 }

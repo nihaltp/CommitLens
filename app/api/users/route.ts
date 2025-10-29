@@ -9,11 +9,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid usernames" }, { status: 400 })
     }
 
-    const users = await Promise.all(usernames.map((username: string) => getUserStats(username)))
+    const users = await Promise.allSettled(usernames.map((username: string) => getUserStats(username)))
 
-    return NextResponse.json({ users })
+    // Check if all requests failed
+    const errors = users
+      .map((result, index) => (result.status === "rejected" ? result.reason.message : null))
+      .filter(Boolean)
+
+    if (errors.length === usernames.length) {
+      // All requests failed
+      return NextResponse.json({ error: errors[0] || "Failed to fetch user data" }, { status: 500 })
+    }
+
+    // Map results, handling both successful and failed requests
+    const successfulUsers = users.map((result) => (result.status === "fulfilled" ? result.value : null)).filter(Boolean)
+
+    return NextResponse.json({ users: successfulUsers })
   } catch (error) {
     console.error("[v0] API error:", error)
-    return NextResponse.json({ error: "Failed to fetch user data" }, { status: 500 })
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to fetch user data" },
+      { status: 500 },
+    )
   }
 }

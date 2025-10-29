@@ -3,6 +3,18 @@ import type { UserStats, GitHubUser, ContributionDay } from "./types"
 
 const GITHUB_API_BASE = "https://api.github.com"
 
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN
+
+function getHeaders() {
+  const headers: Record<string, string> = {
+    Accept: "application/vnd.github.v3+json",
+  }
+  if (GITHUB_TOKEN) {
+    headers.Authorization = `token ${GITHUB_TOKEN}`
+  }
+  return headers
+}
+
 export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
   const cacheKey = `github:user:${username}`
   const cached = await getCachedData<GitHubUser>(cacheKey)
@@ -10,12 +22,18 @@ export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
   if (cached) return cached
 
   const response = await fetch(`${GITHUB_API_BASE}/users/${username}`, {
-    headers: {
-      Accept: "application/vnd.github.v3+json",
-    },
+    headers: getHeaders(),
   })
 
   if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error(
+        "GitHub API rate limit exceeded. Please try again in a few minutes or add a GITHUB_TOKEN environment variable for higher limits.",
+      )
+    }
+    if (response.status === 404) {
+      throw new Error(`GitHub user "${username}" not found`)
+    }
     throw new Error(`GitHub API error: ${response.status}`)
   }
 

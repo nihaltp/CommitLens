@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { DashboardTabs } from "@/components/dashboard-tabs"
 import { ComparisonSummary } from "@/components/comparison-summary"
 import { ExportMenu } from "@/components/export-menu"
@@ -15,13 +15,17 @@ export default function DashboardPage() {
   const [users, setUsers] = useState<UserStats[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isFetching, setIsFetching] = useState(false)
 
-  const usernames = searchParams.get("users")?.split(",") || []
+  const usernames = useMemo(() => searchParams.get("users")?.split(",") || [], [searchParams])
   const timeRange = searchParams.get("range") || "year"
 
   useEffect(() => {
+    if (isFetching) return
+
     const fetchData = async () => {
       try {
+        setIsFetching(true)
         setIsLoading(true)
         setError(null)
         const response = await fetch("/api/users", {
@@ -31,22 +35,30 @@ export default function DashboardPage() {
         })
 
         if (!response.ok) {
-          throw new Error("Failed to fetch user data")
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.error || "Failed to fetch user data")
         }
 
         const data = await response.json()
         setUsers(data.users)
+        setError(null)
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred")
+        const errorMessage = err instanceof Error ? err.message : "An error occurred"
+        setError(errorMessage)
+        setUsers([])
+        if (errorMessage.includes("rate limit") || errorMessage.includes("401") || errorMessage.includes("403")) {
+          console.warn("[v0] Stopping retries due to:", errorMessage)
+        }
       } finally {
         setIsLoading(false)
+        setIsFetching(false)
       }
     }
 
     if (usernames.length > 0) {
       fetchData()
     }
-  }, [usernames, timeRange])
+  }, [usernames, timeRange, isFetching])
 
   if (isLoading) {
     return (
@@ -74,6 +86,9 @@ export default function DashboardPage() {
           <div className="bg-destructive/10 border border-destructive rounded-lg p-6">
             <p className="text-destructive font-semibold">Error: {error}</p>
             <p className="text-sm text-destructive/80 mt-2">Please check the usernames and try again.</p>
+            <Button onClick={() => router.push("/")} className="mt-4">
+              Try Again
+            </Button>
           </div>
         </div>
       </main>
