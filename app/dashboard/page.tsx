@@ -58,7 +58,7 @@ export default function DashboardPage() {
     if (usernames.length > 0) {
       fetchData()
     }
-  }, [usernames, timeRange, isFetching])
+  }, [usernames, timeRange])
 
   if (isLoading) {
     return (

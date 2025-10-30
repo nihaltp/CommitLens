@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { HomeHeader } from "@/components/home-header"
 import { UsernameInput } from "@/components/username-input"
 import { Card } from "@/components/ui/card"
+import { SetupGuide } from "@/components/setup-guide"
 
 export default function Home() {
   const router = useRouter()
@@ -28,6 +29,8 @@ export default function Home() {
     <main className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto px-4 py-12 md:py-20">
         <HomeHeader />
+
+        <SetupGuide missingVars={["GITHUB_TOKEN", "KV_REST_API_URL", "KV_REST_API_TOKEN"]} />
 
         <Card className="bg-card border-border p-6 md:p-8 mb-12">
           <UsernameInput onSubmit={handleSubmit} isLoading={isLoading} />

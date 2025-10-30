@@ -3,14 +3,13 @@ import type { UserStats, GitHubUser, ContributionDay } from "./types"
 
 const GITHUB_API_BASE = "https://api.github.com"
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN
-
 function getHeaders() {
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
   }
-  if (GITHUB_TOKEN) {
-    headers.Authorization = `token ${GITHUB_TOKEN}`
+  const token = process.env.GITHUB_TOKEN
+  if (token) {
+    headers.Authorization = `token ${token}`
   }
   return headers
 }
